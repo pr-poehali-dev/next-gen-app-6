@@ -5,7 +5,7 @@ import Icon from "@/components/ui/icon"
 import type { SectionProps, DonateRank, SocialLink } from "@/types"
 import DonateModal from "./DonateModal"
 
-export default function Section({ id, title, subtitle, content, isActive, showButton, buttonText, ip, ranks, socials }: SectionProps) {
+export default function Section({ id, title, subtitle, content, isActive, showButton, buttonText, ip, ranks, socials, onButtonClick }: SectionProps) {
   const [selectedRank, setSelectedRank] = useState<DonateRank | null>(null)
 
   return (
@@ -191,6 +191,7 @@ export default function Section({ id, title, subtitle, content, isActive, showBu
               variant="outline"
               size="lg"
               className="text-green-400 bg-transparent border-green-400 hover:bg-green-400 hover:text-black transition-colors text-base font-semibold px-8"
+              onClick={onButtonClick}
             >
               {buttonText}
             </Button>

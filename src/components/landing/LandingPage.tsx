@@ -67,6 +67,10 @@ export default function LandingPage() {
             key={section.id}
             {...section}
             isActive={index === activeSection}
+            onButtonClick={section.showButton ? () => {
+              const donateIndex = sections.findIndex(s => s.id === 'donate')
+              if (donateIndex !== -1) handleNavClick(donateIndex)
+            } : undefined}
           />
         ))}
       </div>

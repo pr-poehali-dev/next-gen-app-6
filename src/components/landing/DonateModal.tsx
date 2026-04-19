@@ -26,8 +26,8 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
       return
     }
     setError("")
-    const comment = encodeURIComponent(`Ранг ${rank.name} для ${nick.trim()}`)
-    const url = `https://www.donationalerts.com/r/Shebls?amount=${rank.price}&comment=${comment}`
+    const message = encodeURIComponent(`Ранг ${rank.name} для ${nick.trim()}`)
+    const url = `https://www.donationalerts.com/r/Shebls?amount=${rank.price}&message=${message}`
     window.open(url, '_blank')
   }
 

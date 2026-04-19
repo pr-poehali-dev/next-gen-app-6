@@ -74,7 +74,7 @@ export const sections = [
   },
   {
     id: 'donate',
-    title: 'Выбери свой ранг.',
+    title: 'Выбери свой донат.',
     ranks: donateRanks,
   },
   {
