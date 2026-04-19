@@ -138,7 +138,7 @@ export default function Section({ id, title, subtitle, content, isActive, showBu
             animate={isActive ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <div className="flex gap-5">
+            <div className="flex flex-wrap gap-5">
               {socials.map((social: SocialLink, i: number) => (
                 <motion.a
                   key={social.label}
@@ -164,6 +164,19 @@ export default function Section({ id, title, subtitle, content, isActive, showBu
                 </motion.a>
               ))}
             </div>
+            <motion.a
+              href="https://t.me/She_bls"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 text-neutral-500 hover:text-[#29B6F6] transition-colors text-sm mt-2 w-fit"
+              initial={{ opacity: 0 }}
+              animate={isActive ? { opacity: 1 } : {}}
+              transition={{ duration: 0.4, delay: 0.6 }}
+            >
+              <Icon name="Clock" size={14} className="flex-shrink-0" />
+              Если ранг не выдан более 2 дней — пиши в личку Telegram:
+              <span className="text-[#29B6F6] font-medium">@She_bls</span>
+            </motion.a>
           </motion.div>
         )}
 
