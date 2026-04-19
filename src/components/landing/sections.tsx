@@ -82,4 +82,23 @@ export const sections = [
     title: 'Как это работает?',
     content: 'Выбираешь ранг → вводишь свой ник → оплачиваешь → донат выдаётся автоматически. Никаких ожиданий, никаких заявок.'
   },
+  {
+    id: 'socials',
+    title: 'Наши сообщества.',
+    content: 'Подписывайся — там новости сервера, видео и общение с игроками.',
+    socials: [
+      {
+        label: 'Telegram',
+        url: 'https://t.me/Shebls_say',
+        icon: 'Send',
+        color: '#29B6F6',
+      },
+      {
+        label: 'YouTube',
+        url: 'https://www.youtube.com/@Shebls',
+        icon: 'Youtube',
+        color: '#FF0000',
+      },
+    ]
+  },
 ]

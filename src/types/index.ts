@@ -9,6 +9,13 @@ export interface DonateRank {
   perks: string[]
 }
 
+export interface SocialLink {
+  label: string
+  url: string
+  icon: string
+  color: string
+}
+
 export interface Section {
   id: string
   title: string
@@ -18,6 +25,7 @@ export interface Section {
   buttonText?: string
   ip?: string
   ranks?: DonateRank[]
+  socials?: SocialLink[]
 }
 
 export interface SectionProps extends Section {

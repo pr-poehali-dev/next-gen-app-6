@@ -2,10 +2,10 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import Icon from "@/components/ui/icon"
-import type { SectionProps, DonateRank } from "@/types"
+import type { SectionProps, DonateRank, SocialLink } from "@/types"
 import DonateModal from "./DonateModal"
 
-export default function Section({ id, title, subtitle, content, isActive, showButton, buttonText, ip, ranks }: SectionProps) {
+export default function Section({ id, title, subtitle, content, isActive, showButton, buttonText, ip, ranks, socials }: SectionProps) {
   const [selectedRank, setSelectedRank] = useState<DonateRank | null>(null)
 
   return (
@@ -128,6 +128,42 @@ export default function Section({ id, title, subtitle, content, isActive, showBu
               <Icon name="Clock" size={12} />
               Ранги выдаются вручную администратором — не мгновенно
             </p>
+          </motion.div>
+        )}
+
+        {socials && socials.length > 0 && (
+          <motion.div
+            className="mt-10 flex flex-col gap-6"
+            initial={{ opacity: 0, y: 40 }}
+            animate={isActive ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <div className="flex gap-5">
+              {socials.map((social: SocialLink, i: number) => (
+                <motion.a
+                  key={social.label}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 bg-white/5 border border-white/10 backdrop-blur rounded-2xl px-6 py-5 hover:bg-white/10 transition-all group"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={isActive ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
+                >
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: social.color + '22', border: `2px solid ${social.color}55` }}
+                  >
+                    <Icon name={social.icon} size={22} style={{ color: social.color }} />
+                  </div>
+                  <div>
+                    <p className="text-white font-semibold text-base group-hover:underline">{social.label}</p>
+                    <p className="text-neutral-500 text-xs">{social.url.replace('https://', '')}</p>
+                  </div>
+                  <Icon name="ArrowUpRight" size={16} className="text-neutral-600 group-hover:text-white transition-colors ml-2" />
+                </motion.a>
+              ))}
+            </div>
           </motion.div>
         )}
 
