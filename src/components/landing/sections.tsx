@@ -4,8 +4,8 @@ export const sections = [
   {
     id: 'hero',
     subtitle: <Badge variant="outline" className="text-green-400 border-green-400">1.19.3 • Выживание + PvP</Badge>,
-    title: "Твой донат — твоя сила.",
-    content: 'Поддержи сервер и получи уникальные привилегии прямо в игре.',
+    title: "FortressCraft",
+    content: 'Лучший Minecraft-сервер в стиле средневековья.',
     showButton: true,
     buttonText: 'Выбрать донат'
   },
@@ -13,7 +13,7 @@ export const sections = [
     id: 'ip',
     title: 'Заходи и играй.',
     content: 'Подключайся прямо сейчас — сервер онлайн 24/7.',
-    ip: 'play.yourserver.ru'
+    ip: 'd2.atlantix.me:25054'
   },
   {
     id: 'features',
