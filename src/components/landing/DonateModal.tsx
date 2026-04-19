@@ -102,9 +102,7 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
                 {error}
               </p>
             )}
-            <p className="text-neutral-600 text-xs mt-1.5">
-              Донат будет выдан автоматически на этот ник после оплаты
-            </p>
+
           </div>
 
           <div className="bg-white/5 rounded-lg px-3 py-2.5 mb-3 space-y-2">
@@ -114,7 +112,7 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
             </p>
             <p className="text-neutral-400 text-xs flex items-start gap-1.5">
               <Icon name="MessageSquare" size={12} className="flex-shrink-0 text-blue-400 mt-0.5" />
-              В описании укажи свой ник и название ранга — <span className="text-white font-semibold">подставится автоматически</span>
+              В описании укажи свой ник и название ранга
             </p>
             <p className="text-neutral-400 text-xs flex items-start gap-1.5">
               <Icon name="Gift" size={12} className="flex-shrink-0 text-pink-400 mt-0.5" />
@@ -138,7 +136,7 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
           </Button>
 
           <p className="text-center text-neutral-600 text-xs mt-3">
-            Откроется страница DonationAlerts · Ник будет в комментарии
+            Откроется страница DonationAlerts
           </p>
         </motion.div>
       </motion.div>
