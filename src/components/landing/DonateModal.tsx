@@ -12,12 +12,11 @@ interface DonateModalProps {
 
 export default function DonateModal({ rank, onClose }: DonateModalProps) {
   const [nick, setNick] = useState("")
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
   if (!rank) return null
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!nick.trim()) {
       setError("Введи свой ник в Minecraft")
       return
@@ -27,12 +26,9 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
       return
     }
     setError("")
-    setLoading(true)
-    try {
-      alert("Оплата будет подключена после добавления ключей ЮKassa!")
-    } finally {
-      setLoading(false)
-    }
+    const comment = encodeURIComponent(`Ранг ${rank.name} для ${nick.trim()}`)
+    const url = `https://www.donationalerts.com/r/Shebls?amount=${rank.price}&comment=${comment}`
+    window.open(url, '_blank')
   }
 
   return (
@@ -111,27 +107,24 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
             </p>
           </div>
 
+          <p className="text-neutral-500 text-xs mb-3 flex items-center gap-1.5 bg-white/5 rounded-lg px-3 py-2">
+            <Icon name="Clock" size={12} className="flex-shrink-0 text-yellow-500" />
+            Ранг выдаётся вручную администратором после проверки доната — не мгновенно
+          </p>
+
           <Button
             className="w-full font-semibold text-black text-base py-5"
             style={{ backgroundColor: rank.color }}
             onClick={handleSubmit}
-            disabled={loading}
           >
-            {loading ? (
-              <span className="flex items-center gap-2">
-                <Icon name="Loader2" size={16} className="animate-spin" />
-                Создаём платёж...
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                <Icon name="CreditCard" size={16} />
-                Оплатить {rank.price} ₽
-              </span>
-            )}
+            <span className="flex items-center gap-2">
+              <Icon name="Heart" size={16} />
+              Задонатить {rank.price} ₽ на DonationAlerts
+            </span>
           </Button>
 
           <p className="text-center text-neutral-600 text-xs mt-3">
-            Оплата через ЮKassa · Безопасно
+            Откроется страница DonationAlerts · Ник будет в комментарии
           </p>
         </motion.div>
       </motion.div>
