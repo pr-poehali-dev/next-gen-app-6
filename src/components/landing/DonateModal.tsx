@@ -114,7 +114,11 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
             </p>
             <p className="text-neutral-400 text-xs flex items-start gap-1.5">
               <Icon name="MessageSquare" size={12} className="flex-shrink-0 text-blue-400 mt-0.5" />
-              В описании/комментарии напиши свой ник — <span className="text-white font-semibold">он подставится автоматически</span>
+              В описании укажи свой ник и название ранга — <span className="text-white font-semibold">подставится автоматически</span>
+            </p>
+            <p className="text-neutral-400 text-xs flex items-start gap-1.5">
+              <Icon name="Gift" size={12} className="flex-shrink-0 text-pink-400 mt-0.5" />
+              Хочешь — можешь оставить чаевые, указав сумму больше {rank.price} ₽ 🙂
             </p>
             <p className="text-neutral-400 text-xs flex items-start gap-1.5">
               <Icon name="Clock" size={12} className="flex-shrink-0 text-yellow-500 mt-0.5" />
