@@ -126,7 +126,7 @@ export default function Section({ id, title, subtitle, content, isActive, showBu
             </div>
             <p className="text-neutral-500 text-xs mt-3 flex items-center gap-1.5">
               <Icon name="Clock" size={12} />
-              Ранги выдаются вручную администратором — не мгновенно
+              Ранги выдаются вручную администратором в течение 2 дней
             </p>
           </motion.div>
         )}

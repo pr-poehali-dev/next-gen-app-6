@@ -109,7 +109,7 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
 
           <p className="text-neutral-500 text-xs mb-3 flex items-center gap-1.5 bg-white/5 rounded-lg px-3 py-2">
             <Icon name="Clock" size={12} className="flex-shrink-0 text-yellow-500" />
-            Ранг выдаётся вручную администратором после проверки доната — не мгновенно
+            Ранг выдаётся администратором в течение 2 дней после доната
           </p>
 
           <Button
