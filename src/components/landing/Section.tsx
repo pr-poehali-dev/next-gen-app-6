@@ -174,7 +174,7 @@ export default function Section({ id, title, subtitle, content, isActive, showBu
               transition={{ duration: 0.4, delay: 0.6 }}
             >
               <Icon name="Clock" size={14} className="flex-shrink-0" />
-              Если ранг не выдан более 2 дней — пиши в личку Telegram:
+              Если донат не выдан более 2 дней — пиши в личку Telegram:
               <span className="text-[#29B6F6] font-medium">@She_bls</span>
             </motion.a>
           </motion.div>
