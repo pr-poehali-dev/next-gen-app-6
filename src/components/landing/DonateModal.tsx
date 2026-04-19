@@ -107,10 +107,20 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
             </p>
           </div>
 
-          <p className="text-neutral-500 text-xs mb-3 flex items-center gap-1.5 bg-white/5 rounded-lg px-3 py-2">
-            <Icon name="Clock" size={12} className="flex-shrink-0 text-yellow-500" />
-            Ранг выдаётся администратором в течение 2 дней после доната
-          </p>
+          <div className="bg-white/5 rounded-lg px-3 py-2.5 mb-3 space-y-2">
+            <p className="text-neutral-400 text-xs flex items-start gap-1.5">
+              <Icon name="RussianRuble" size={12} className="flex-shrink-0 text-green-400 mt-0.5" />
+              На странице доната укажи сумму <span className="text-white font-semibold">{rank.price} ₽</span>
+            </p>
+            <p className="text-neutral-400 text-xs flex items-start gap-1.5">
+              <Icon name="MessageSquare" size={12} className="flex-shrink-0 text-blue-400 mt-0.5" />
+              В описании/комментарии напиши свой ник — <span className="text-white font-semibold">он подставится автоматически</span>
+            </p>
+            <p className="text-neutral-400 text-xs flex items-start gap-1.5">
+              <Icon name="Clock" size={12} className="flex-shrink-0 text-yellow-500 mt-0.5" />
+              Ранг выдаётся администратором в течение 2 дней после доната
+            </p>
+          </div>
 
           <Button
             className="w-full font-semibold text-black text-base py-5"
