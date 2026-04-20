@@ -5,7 +5,7 @@ import Icon from "@/components/ui/icon"
 import type { SectionProps, DonateRank, SocialLink } from "@/types"
 import DonateModal from "./DonateModal"
 
-export default function Section({ id, title, subtitle, content, isActive, showButton, buttonText, ip, ranks, socials, onButtonClick }: SectionProps) {
+export default function Section({ id, title, subtitle, content, isActive, showButton, buttonText, ip, ranks, socials, onButtonClick, onAddToCart }: SectionProps) {
   const [selectedRank, setSelectedRank] = useState<DonateRank | null>(null)
 
   return (
@@ -73,58 +73,72 @@ export default function Section({ id, title, subtitle, content, isActive, showBu
 
         {ranks && ranks.length > 0 && (
           <motion.div
-            className="mt-8 w-full overflow-x-auto pb-4"
+            className="mt-6 w-full overflow-y-auto"
+            style={{ maxHeight: 'calc(100vh - 220px)' }}
             initial={{ opacity: 0, y: 40 }}
             animate={isActive ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <div className="flex gap-4 min-w-max pb-2">
+            <div className="grid grid-cols-2 gap-4 pb-4 pr-1">
               {ranks.map((rank, i) => (
                 <motion.div
                   key={rank.id}
-                  className="relative flex flex-col rounded-2xl overflow-hidden border bg-white/5 backdrop-blur w-44 flex-shrink-0 hover:scale-105 transition-transform cursor-pointer group"
+                  className="relative flex flex-col rounded-2xl overflow-hidden border bg-white/5 backdrop-blur cursor-pointer group"
                   initial={{ opacity: 0, y: 30 }}
                   animate={isActive ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.4, delay: 0.1 + i * 0.07 }}
                   style={{ borderColor: rank.color + '55' }}
                 >
-                  <div className="relative h-36 overflow-hidden">
+                  <div className="relative h-44 overflow-hidden">
                     <img
                       src={rank.image}
                       alt={rank.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                  </div>
-                  <div className="p-3 flex flex-col gap-2 flex-1">
-                    <span className="font-bold text-xs px-2 py-0.5 rounded-md w-fit" style={{ color: rank.color, backgroundColor: rank.color + '22', border: `1px solid ${rank.color}55` }}>
-                      [{rank.name}]
-                    </span>
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-white text-sm">{rank.name}</span>
-                      <span className="font-bold text-sm" style={{ color: rank.color }}>{rank.price} ₽</span>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                    <div className="absolute bottom-3 left-3 right-3">
+                      <span className="font-bold text-xs px-2 py-0.5 rounded-md" style={{ color: rank.color, backgroundColor: rank.color + '33', border: `1px solid ${rank.color}55` }}>
+                        [{rank.name}]
+                      </span>
                     </div>
-                    <ul className="flex flex-col gap-1">
-                      {rank.perks.slice(1).map((perk, j) => (
-                        <li key={j} className="flex items-center gap-1.5 text-neutral-400 text-xs">
-                          <Icon name="Check" size={10} className="flex-shrink-0" style={{ color: rank.color }} />
+                  </div>
+                  <div className="p-4 flex flex-col gap-3 flex-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-white text-base">{rank.name}</span>
+                      <span className="font-bold text-lg" style={{ color: rank.color }}>{rank.price} ₽</span>
+                    </div>
+                    <ul className="flex flex-col gap-1.5 flex-1">
+                      {rank.perks.map((perk, j) => (
+                        <li key={j} className="flex items-center gap-2 text-neutral-300 text-xs">
+                          <Icon name="Check" size={11} className="flex-shrink-0" style={{ color: rank.color }} />
                           {perk}
                         </li>
                       ))}
                     </ul>
-                    <Button
-                      size="sm"
-                      className="mt-auto w-full text-xs font-semibold"
-                      style={{ backgroundColor: rank.color, color: '#000' }}
-                      onClick={() => setSelectedRank(rank)}
-                    >
-                      Купить
-                    </Button>
+                    <div className="flex gap-2 mt-2">
+                      <Button
+                        size="sm"
+                        className="flex-1 text-xs font-semibold"
+                        style={{ backgroundColor: rank.color, color: '#000' }}
+                        onClick={() => setSelectedRank(rank)}
+                      >
+                        Купить
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="px-3 border-purple-500/50 text-purple-400 hover:bg-purple-600 hover:text-white hover:border-purple-600 transition-colors"
+                        onClick={() => onAddToCart?.(rank)}
+                        title="В корзину"
+                      >
+                        <Icon name="ShoppingCart" size={14} />
+                      </Button>
+                    </div>
                   </div>
                 </motion.div>
               ))}
             </div>
-            <p className="text-neutral-500 text-xs mt-3 flex items-center gap-1.5">
+            <p className="text-neutral-500 text-xs mt-1 flex items-center gap-1.5">
               <Icon name="Clock" size={12} />
               Ранги выдаются вручную администратором в течение 2 дней
             </p>

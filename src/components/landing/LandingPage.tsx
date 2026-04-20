@@ -1,14 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, useScroll, useSpring } from 'framer-motion'
+import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion'
 import Section from './Section'
 import Layout from './Layout'
+import CartDrawer from './CartDrawer'
 import { sections } from './sections'
+import { useCart } from '@/hooks/useCart'
+import Icon from '@/components/ui/icon'
 
 export default function LandingPage() {
   const [activeSection, setActiveSection] = useState(0)
+  const [cartOpen, setCartOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ container: containerRef })
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 })
+  const { items, badge, addItem, removeItem, clearBadge, total } = useCart()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,26 +24,20 @@ export default function LandingPage() {
         setActiveSection(newActiveSection)
       }
     }
-
     const container = containerRef.current
-    if (container) {
-      container.addEventListener('scroll', handleScroll)
-    }
-
-    return () => {
-      if (container) {
-        container.removeEventListener('scroll', handleScroll)
-      }
-    }
+    if (container) container.addEventListener('scroll', handleScroll)
+    return () => { if (container) container.removeEventListener('scroll', handleScroll) }
   }, [])
 
   const handleNavClick = (index: number) => {
     if (containerRef.current) {
-      containerRef.current.scrollTo({
-        top: index * window.innerHeight,
-        behavior: 'smooth'
-      })
+      containerRef.current.scrollTo({ top: index * window.innerHeight, behavior: 'smooth' })
     }
+  }
+
+  const handleOpenCart = () => {
+    clearBadge()
+    setCartOpen(true)
   }
 
   return (
@@ -54,10 +53,33 @@ export default function LandingPage() {
           />
         ))}
       </nav>
+
+      <button
+        onClick={handleOpenCart}
+        className="fixed top-5 left-5 z-40 w-12 h-12 rounded-2xl bg-purple-600 hover:bg-purple-700 transition-colors flex items-center justify-center shadow-lg shadow-purple-900/40"
+      >
+        <Icon name="ShoppingCart" size={20} className="text-white" />
+        <AnimatePresence>
+          {badge > 0 && (
+            <motion.span
+              key={badge}
+              className="absolute -top-1.5 -right-1.5 min-w-[22px] h-[22px] bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center px-1 shadow"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+            >
+              {badge}
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </button>
+
       <motion.div
         className="fixed top-0 left-0 right-0 h-0.5 bg-white origin-left z-30"
         style={{ scaleX }}
       />
+
       <div
         ref={containerRef}
         className="h-full overflow-y-auto snap-y snap-mandatory"
@@ -71,9 +93,21 @@ export default function LandingPage() {
               const donateIndex = sections.findIndex(s => s.id === 'donate')
               if (donateIndex !== -1) handleNavClick(donateIndex)
             } : undefined}
+            onAddToCart={addItem}
           />
         ))}
       </div>
+
+      <AnimatePresence>
+        {cartOpen && (
+          <CartDrawer
+            items={items}
+            total={total}
+            onRemove={removeItem}
+            onClose={() => setCartOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </Layout>
   )
 }
