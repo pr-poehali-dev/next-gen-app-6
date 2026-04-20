@@ -37,11 +37,9 @@ export default function LandingPage() {
   const handleNavClick = (index: number) => {
     if (!containerRef.current) return
     const sectionId = sections[index]?.id
-    const el = containerRef.current.querySelector(`#${sectionId}`)
+    const el = containerRef.current.querySelector(`#${sectionId}`) as HTMLElement | null
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' })
-    } else {
-      containerRef.current.scrollTo({ top: index * window.innerHeight, behavior: 'smooth' })
+      containerRef.current.scrollTo({ top: el.offsetTop, behavior: 'smooth' })
     }
   }
 
