@@ -76,6 +76,7 @@ export const sections = [
     id: 'donate',
     title: 'Выбери свой донат.',
     ranks: donateRanks,
+    freeScroll: true,
   },
   {
     id: 'faq',

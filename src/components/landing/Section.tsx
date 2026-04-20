@@ -5,14 +5,14 @@ import Icon from "@/components/ui/icon"
 import type { SectionProps, DonateRank, SocialLink } from "@/types"
 import DonateModal from "./DonateModal"
 
-export default function Section({ id, title, subtitle, content, isActive, showButton, buttonText, ip, ranks, socials, onButtonClick, onAddToCart }: SectionProps) {
+export default function Section({ id, title, subtitle, content, isActive, showButton, buttonText, ip, ranks, socials, onButtonClick, onAddToCart, freeScroll }: SectionProps) {
   const [selectedRank, setSelectedRank] = useState<DonateRank | null>(null)
 
   return (
     <>
       <section
         id={id}
-        className="relative h-screen w-full snap-start flex flex-col justify-center p-8 md:p-16 lg:p-24 overflow-hidden"
+        className={`relative w-full flex flex-col p-8 md:p-16 lg:p-24 ${freeScroll ? 'min-h-screen justify-start pt-20' : 'h-screen snap-start justify-center overflow-hidden'}`}
         style={id === 'hero' ? {
           backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 100%), url(https://cdn.poehali.dev/projects/7490399e-ec82-41a5-b07a-fb23138b0b97/bucket/e08139b8-602c-4afd-bcd8-735beae543ea.png)`,
           backgroundSize: 'cover',
@@ -73,8 +73,7 @@ export default function Section({ id, title, subtitle, content, isActive, showBu
 
         {ranks && ranks.length > 0 && (
           <motion.div
-            className="mt-6 w-full overflow-y-auto"
-            style={{ maxHeight: 'calc(100vh - 220px)' }}
+            className="mt-6 w-full"
             initial={{ opacity: 0, y: 40 }}
             animate={isActive ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.2 }}

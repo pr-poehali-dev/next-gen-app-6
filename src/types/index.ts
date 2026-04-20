@@ -26,10 +26,12 @@ export interface Section {
   ip?: string
   ranks?: DonateRank[]
   socials?: SocialLink[]
+  freeScroll?: boolean
 }
 
 export interface SectionProps extends Section {
   isActive: boolean
   onButtonClick?: () => void
   onAddToCart?: (rank: DonateRank) => void
+  sectionIndex?: number
 }
