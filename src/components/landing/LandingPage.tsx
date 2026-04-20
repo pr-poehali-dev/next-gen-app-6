@@ -93,7 +93,7 @@ export default function LandingPage() {
 
       <div
         ref={containerRef}
-        className="h-full overflow-y-auto snap-y snap-mandatory"
+        className="h-full overflow-y-auto"
       >
         {sections.map((section, index) => (
           <Section

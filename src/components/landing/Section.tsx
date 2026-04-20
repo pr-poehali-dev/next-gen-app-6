@@ -12,7 +12,7 @@ export default function Section({ id, title, subtitle, content, isActive, showBu
     <>
       <section
         id={id}
-        className={`relative w-full flex flex-col p-8 md:p-16 lg:p-24 ${freeScroll ? 'min-h-screen justify-start pt-20' : 'h-screen snap-start justify-center overflow-hidden'}`}
+        className={`relative w-full flex flex-col p-8 md:p-16 lg:p-24 ${freeScroll ? 'min-h-screen justify-start pt-20' : 'h-screen justify-center overflow-hidden'}`}
         style={id === 'hero' ? {
           backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 100%), url(https://cdn.poehali.dev/projects/7490399e-ec82-41a5-b07a-fb23138b0b97/bucket/e08139b8-602c-4afd-bcd8-735beae543ea.png)`,
           backgroundSize: 'cover',
