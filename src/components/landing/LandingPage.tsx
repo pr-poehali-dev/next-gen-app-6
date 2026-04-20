@@ -16,21 +16,31 @@ export default function LandingPage() {
   const { items, badge, addItem, removeItem, clearBadge, total } = useCart()
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (containerRef.current) {
-        const scrollPosition = containerRef.current.scrollTop
-        const windowHeight = window.innerHeight
-        const newActiveSection = Math.floor(scrollPosition / windowHeight)
-        setActiveSection(newActiveSection)
-      }
-    }
     const container = containerRef.current
-    if (container) container.addEventListener('scroll', handleScroll)
-    return () => { if (container) container.removeEventListener('scroll', handleScroll) }
+    if (!container) return
+    const handleScroll = () => {
+      const scrollTop = container.scrollTop
+      const sectionEls = sections.map(s => container.querySelector(`#${s.id}`) as HTMLElement | null)
+      let best = 0
+      let bestDist = Infinity
+      sectionEls.forEach((el, i) => {
+        if (!el) return
+        const dist = Math.abs(el.offsetTop - scrollTop)
+        if (dist < bestDist) { bestDist = dist; best = i }
+      })
+      setActiveSection(best)
+    }
+    container.addEventListener('scroll', handleScroll)
+    return () => container.removeEventListener('scroll', handleScroll)
   }, [])
 
   const handleNavClick = (index: number) => {
-    if (containerRef.current) {
+    if (!containerRef.current) return
+    const sectionId = sections[index]?.id
+    const el = containerRef.current.querySelector(`#${sectionId}`)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' })
+    } else {
       containerRef.current.scrollTo({ top: index * window.innerHeight, behavior: 'smooth' })
     }
   }
