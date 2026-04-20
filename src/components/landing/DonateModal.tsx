@@ -13,8 +13,12 @@ interface DonateModalProps {
 export default function DonateModal({ rank, onClose }: DonateModalProps) {
   const [nick, setNick] = useState("")
   const [error, setError] = useState("")
+  const [copied, setCopied] = useState(false)
+  const [step, setStep] = useState<'form' | 'instruction'>('form')
 
   if (!rank) return null
+
+  const donateText = `Ранг ${rank.name} для ${nick.trim()}`
 
   const handleSubmit = () => {
     if (!nick.trim()) {
@@ -26,9 +30,24 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
       return
     }
     setError("")
-    const message = encodeURIComponent(`Ранг ${rank.name} для ${nick.trim()}`)
-    const url = `https://www.donationalerts.com/r/Shebls?amount=${rank.price}&message=${message}`
-    window.open(url, '_blank')
+    navigator.clipboard.writeText(donateText).then(() => setCopied(true)).catch(() => setCopied(false))
+    setStep('instruction')
+  }
+
+  const handleOpenDA = () => {
+    window.open(`https://www.donationalerts.com/r/Shebls`, '_blank')
+  }
+
+  const handleCopyAgain = () => {
+    navigator.clipboard.writeText(donateText).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }).catch(() => setCopied(false))
+  }
+
+  const handleBack = () => {
+    setStep('form')
+    setCopied(false)
   }
 
   return (
@@ -71,73 +90,118 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
             </div>
           </div>
 
-          <div className="mb-2">
-            <ul className="flex flex-wrap gap-2 mb-6">
-              {rank.perks.map((perk, i) => (
-                <li
-                  key={i}
-                  className="flex items-center gap-1.5 text-xs text-neutral-300 bg-white/5 rounded-lg px-3 py-1.5"
+          <AnimatePresence mode="wait">
+            {step === 'form' ? (
+              <motion.div
+                key="form"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.2 }}
+              >
+                <ul className="flex flex-wrap gap-2 mb-5">
+                  {rank.perks.map((perk, i) => (
+                    <li
+                      key={i}
+                      className="flex items-center gap-1.5 text-xs text-neutral-300 bg-white/5 rounded-lg px-3 py-1.5"
+                    >
+                      <Icon name="Check" size={10} style={{ color: rank.color }} />
+                      {perk}
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mb-5">
+                  <label className="block text-sm text-neutral-400 mb-2">
+                    Твой ник в Minecraft
+                  </label>
+                  <Input
+                    placeholder="Например: Steve123"
+                    value={nick}
+                    onChange={e => { setNick(e.target.value); setError("") }}
+                    className="bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus:border-green-500"
+                    maxLength={16}
+                  />
+                  {error && (
+                    <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
+                      <Icon name="AlertCircle" size={12} />
+                      {error}
+                    </p>
+                  )}
+                </div>
+
+                <Button
+                  className="w-full font-semibold text-black text-base py-5"
+                  style={{ backgroundColor: rank.color }}
+                  onClick={handleSubmit}
                 >
-                  <Icon name="Check" size={10} style={{ color: rank.color }} />
-                  {perk}
-                </li>
-              ))}
-            </ul>
-          </div>
+                  <span className="flex items-center gap-2">
+                    <Icon name="Heart" size={16} />
+                    Задонатить {rank.price} ₽
+                  </span>
+                </Button>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="instruction"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 mb-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Icon name="ClipboardCheck" size={16} className="text-green-400" />
+                    <p className="text-green-400 text-sm font-semibold">Текст скопирован!</p>
+                  </div>
+                  <p className="text-white text-sm font-mono bg-black/30 rounded-lg px-3 py-2 break-all">
+                    {donateText}
+                  </p>
+                  <button
+                    onClick={handleCopyAgain}
+                    className="mt-2 text-xs text-neutral-500 hover:text-neutral-300 transition-colors flex items-center gap-1"
+                  >
+                    <Icon name="Copy" size={11} />
+                    {copied ? "Скопировано!" : "Скопировать снова"}
+                  </button>
+                </div>
 
-          <div className="mb-4">
-            <label className="block text-sm text-neutral-400 mb-2">
-              Твой ник в Minecraft
-            </label>
-            <Input
-              placeholder="Например: Steve123"
-              value={nick}
-              onChange={e => { setNick(e.target.value); setError("") }}
-              className="bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus:border-green-500"
-              maxLength={16}
-            />
-            {error && (
-              <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
-                <Icon name="AlertCircle" size={12} />
-                {error}
-              </p>
+                <div className="space-y-3 mb-5">
+                  {[
+                    { icon: "MousePointerClick", color: "text-blue-400", text: <>Нажми <span className="text-white font-semibold">"Открыть DonationAlerts"</span> ниже</> },
+                    { icon: "RussianRuble", color: "text-green-400", text: <>Укажи сумму <span className="text-white font-semibold">{rank.price} ₽</span> (или больше)</> },
+                    { icon: "ClipboardPaste", color: "text-yellow-400", text: <>В поле <span className="text-white font-semibold">"Сообщение"</span> вставь текст (Ctrl+V)</> },
+                    { icon: "Clock", color: "text-pink-400", text: <>Ранг выдаётся администратором <span className="text-white font-semibold">в течение 2 дней</span></> },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start gap-2.5">
+                      <div className={`w-5 h-5 rounded-full bg-white/5 flex items-center justify-center flex-shrink-0 mt-0.5 ${item.color}`}>
+                        <Icon name={item.icon} size={11} />
+                      </div>
+                      <p className="text-neutral-400 text-xs leading-relaxed">{item.text}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <Button
+                  className="w-full font-semibold text-black text-base py-5 mb-2"
+                  style={{ backgroundColor: rank.color }}
+                  onClick={handleOpenDA}
+                >
+                  <span className="flex items-center gap-2">
+                    <Icon name="ExternalLink" size={16} />
+                    Открыть DonationAlerts
+                  </span>
+                </Button>
+
+                <button
+                  onClick={handleBack}
+                  className="w-full text-xs text-neutral-600 hover:text-neutral-400 transition-colors py-1"
+                >
+                  ← Назад
+                </button>
+              </motion.div>
             )}
-
-          </div>
-
-          <div className="bg-white/5 rounded-lg px-3 py-2.5 mb-3 space-y-2">
-            <p className="text-neutral-400 text-xs flex items-start gap-1.5">
-              <Icon name="RussianRuble" size={12} className="flex-shrink-0 text-green-400 mt-0.5" />
-              На странице доната укажи сумму <span className="text-white font-semibold">{rank.price} ₽</span>
-            </p>
-            <p className="text-neutral-400 text-xs flex items-start gap-1.5">
-              <Icon name="MessageSquare" size={12} className="flex-shrink-0 text-blue-400 mt-0.5" />
-              В описании укажи свой ник и название ранга
-            </p>
-            <p className="text-neutral-400 text-xs flex items-start gap-1.5">
-              <Icon name="Gift" size={12} className="flex-shrink-0 text-pink-400 mt-0.5" />
-              Хочешь — можешь оставить чаевые, указав сумму больше {rank.price} ₽ 🙂
-            </p>
-            <p className="text-neutral-400 text-xs flex items-start gap-1.5">
-              <Icon name="Clock" size={12} className="flex-shrink-0 text-yellow-500 mt-0.5" />
-              Донат выдаётся администратором в течение 2 дней
-            </p>
-          </div>
-
-          <Button
-            className="w-full font-semibold text-black text-base py-5"
-            style={{ backgroundColor: rank.color }}
-            onClick={handleSubmit}
-          >
-            <span className="flex items-center gap-2">
-              <Icon name="Heart" size={16} />
-              Задонатить {rank.price} ₽ на DonationAlerts
-            </span>
-          </Button>
-
-          <p className="text-center text-neutral-600 text-xs mt-3">
-            Откроется страница DonationAlerts
-          </p>
+          </AnimatePresence>
         </motion.div>
       </motion.div>
     </AnimatePresence>
