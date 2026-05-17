@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Section from './Section'
 import Layout from './Layout'
@@ -9,15 +9,15 @@ import Icon from '@/components/ui/icon'
 
 const slideVariants = {
   enter: (dir: number) => ({
-    x: dir > 0 ? '100%' : '-100%',
+    y: dir > 0 ? '100%' : '-100%',
     opacity: 0,
   }),
   center: {
-    x: 0,
+    y: 0,
     opacity: 1,
   },
   exit: (dir: number) => ({
-    x: dir > 0 ? '-100%' : '100%',
+    y: dir > 0 ? '-100%' : '100%',
     opacity: 0,
   }),
 }
@@ -27,7 +27,13 @@ export default function LandingPage() {
   const [direction, setDirection] = useState(1)
   const [cartOpen, setCartOpen] = useState(false)
   const dragStartY = useRef(0)
+  const ranksScrollRef = useRef<HTMLDivElement | null>(null)
+  const wheelCooldown = useRef(false)
   const { items, badge, addItem, removeItem, clearBadge, total } = useCart()
+
+  const setRanksRef = useCallback((el: HTMLDivElement | null) => {
+    ranksScrollRef.current = el
+  }, [])
 
   const goTo = (index: number) => {
     if (index === activeSection) return
@@ -39,8 +45,15 @@ export default function LandingPage() {
   const goPrev = () => { if (activeSection > 0) goTo(activeSection - 1) }
 
   const handleWheel = (e: React.WheelEvent) => {
-    if (e.deltaY > 40) goNext()
-    else if (e.deltaY < -40) goPrev()
+    const ranksEl = ranksScrollRef.current
+    if (ranksEl) {
+      const rect = ranksEl.getBoundingClientRect()
+      const inRanks = e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom
+      if (inRanks) return
+    }
+    if (wheelCooldown.current) return
+    if (e.deltaY > 40) { goNext(); wheelCooldown.current = true; setTimeout(() => { wheelCooldown.current = false }, 800) }
+    else if (e.deltaY < -40) { goPrev(); wheelCooldown.current = true; setTimeout(() => { wheelCooldown.current = false }, 800) }
   }
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -123,6 +136,7 @@ export default function LandingPage() {
                 if (donateIndex !== -1) goTo(donateIndex)
               } : undefined}
               onAddToCart={addItem}
+              onRanksRef={setRanksRef}
             />
           </motion.div>
         </AnimatePresence>

@@ -5,7 +5,7 @@ import Icon from "@/components/ui/icon"
 import type { SectionProps, DonateRank, SocialLink } from "@/types"
 import DonateModal from "./DonateModal"
 
-export default function Section({ id, title, subtitle, content, isActive, showButton, buttonText, ip, ranks, socials, onButtonClick, onAddToCart, freeScroll }: SectionProps) {
+export default function Section({ id, title, subtitle, content, isActive, showButton, buttonText, ip, ranks, socials, onButtonClick, onAddToCart, onRanksRef, freeScroll }: SectionProps) {
   const [selectedRank, setSelectedRank] = useState<DonateRank | null>(null)
 
   return (
@@ -73,6 +73,7 @@ export default function Section({ id, title, subtitle, content, isActive, showBu
 
         {ranks && ranks.length > 0 && (
           <motion.div
+            ref={onRanksRef}
             className="mt-4 w-full flex-1 overflow-y-auto pr-1"
             initial={{ opacity: 0, y: 40 }}
             animate={isActive ? { opacity: 1, y: 0 } : {}}

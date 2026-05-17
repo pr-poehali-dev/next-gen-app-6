@@ -33,5 +33,6 @@ export interface SectionProps extends Section {
   isActive: boolean
   onButtonClick?: () => void
   onAddToCart?: (rank: DonateRank) => void
+  onRanksRef?: (el: HTMLDivElement | null) => void
   sectionIndex?: number
 }
