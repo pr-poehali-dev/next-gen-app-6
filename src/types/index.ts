@@ -20,6 +20,7 @@ export interface FeatureItem {
   icon: string
   title: string
   description: string
+  color?: string
 }
 
 export interface Section {

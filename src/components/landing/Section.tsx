@@ -34,7 +34,7 @@ export default function Section({ id, title, subtitle, content, logo, featureLis
           <motion.img
             src={logo}
             alt="logo"
-            className="max-w-xs md:max-w-md lg:max-w-lg mb-6 object-contain"
+            className="max-w-sm md:max-w-xl lg:max-w-2xl mb-6 object-contain"
             initial={{ opacity: 0, y: 30 }}
             animate={isActive ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5 }}
@@ -78,8 +78,11 @@ export default function Section({ id, title, subtitle, content, logo, featureLis
                 animate={isActive ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.4, delay: 0.3 + i * 0.07 }}
               >
-                <div className="w-9 h-9 rounded-lg bg-amber-700/30 border border-amber-600/40 flex items-center justify-center flex-shrink-0">
-                  <Icon name={f.icon} size={16} className="text-amber-400" />
+                <div
+                  className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: (f.color ?? '#F59E0B') + '28', border: `1px solid ${(f.color ?? '#F59E0B')}55` }}
+                >
+                  <Icon name={f.icon} size={16} style={{ color: f.color ?? '#F59E0B' }} />
                 </div>
                 <div>
                   <p className="text-white font-semibold text-sm">{f.title}</p>
