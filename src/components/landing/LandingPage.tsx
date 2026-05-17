@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion'
+import { useRef, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import Section from './Section'
 import Layout from './Layout'
 import CartDrawer from './CartDrawer'
@@ -7,40 +7,50 @@ import { sections } from './sections'
 import { useCart } from '@/hooks/useCart'
 import Icon from '@/components/ui/icon'
 
+const slideVariants = {
+  enter: (dir: number) => ({
+    x: dir > 0 ? '100%' : '-100%',
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (dir: number) => ({
+    x: dir > 0 ? '-100%' : '100%',
+    opacity: 0,
+  }),
+}
+
 export default function LandingPage() {
   const [activeSection, setActiveSection] = useState(0)
+  const [direction, setDirection] = useState(1)
   const [cartOpen, setCartOpen] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ container: containerRef })
-  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 })
+  const dragStartY = useRef(0)
   const { items, badge, addItem, removeItem, clearBadge, total } = useCart()
 
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-    const handleScroll = () => {
-      const scrollTop = container.scrollTop
-      const sectionEls = sections.map(s => container.querySelector(`#${s.id}`) as HTMLElement | null)
-      let best = 0
-      let bestDist = Infinity
-      sectionEls.forEach((el, i) => {
-        if (!el) return
-        const dist = Math.abs(el.offsetTop - scrollTop)
-        if (dist < bestDist) { bestDist = dist; best = i }
-      })
-      setActiveSection(best)
-    }
-    container.addEventListener('scroll', handleScroll)
-    return () => container.removeEventListener('scroll', handleScroll)
-  }, [])
+  const goTo = (index: number) => {
+    if (index === activeSection) return
+    setDirection(index > activeSection ? 1 : -1)
+    setActiveSection(index)
+  }
 
-  const handleNavClick = (index: number) => {
-    if (!containerRef.current) return
-    const sectionId = sections[index]?.id
-    const el = containerRef.current.querySelector(`#${sectionId}`) as HTMLElement | null
-    if (el) {
-      containerRef.current.scrollTo({ top: el.offsetTop, behavior: 'smooth' })
-    }
+  const goNext = () => { if (activeSection < sections.length - 1) goTo(activeSection + 1) }
+  const goPrev = () => { if (activeSection > 0) goTo(activeSection - 1) }
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (e.deltaY > 40) goNext()
+    else if (e.deltaY < -40) goPrev()
+  }
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    dragStartY.current = e.touches[0].clientY
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const diff = dragStartY.current - e.changedTouches[0].clientY
+    if (diff > 50) goNext()
+    else if (diff < -50) goPrev()
   }
 
   const handleOpenCart = () => {
@@ -48,10 +58,12 @@ export default function LandingPage() {
     setCartOpen(true)
   }
 
+  const navSections = sections.filter(s => !s.freeScroll)
+
   return (
     <Layout>
       <nav className="fixed top-0 right-0 h-screen flex flex-col justify-center z-30 p-4">
-        {sections.filter(s => !s.freeScroll).map((section) => {
+        {navSections.map((section) => {
           const index = sections.indexOf(section)
           return (
             <button
@@ -59,7 +71,7 @@ export default function LandingPage() {
               className={`w-3 h-3 rounded-full my-2 transition-all ${
                 index === activeSection ? 'bg-white scale-150' : 'bg-gray-600'
               }`}
-              onClick={() => handleNavClick(index)}
+              onClick={() => goTo(index)}
             />
           )
         })}
@@ -86,27 +98,34 @@ export default function LandingPage() {
         </AnimatePresence>
       </button>
 
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-0.5 bg-white origin-left z-30"
-        style={{ scaleX }}
-      />
-
       <div
-        ref={containerRef}
-        className="h-full overflow-y-auto"
+        className="h-full overflow-hidden relative"
+        onWheel={handleWheel}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
-        {sections.map((section, index) => (
-          <Section
-            key={section.id}
-            {...section}
-            isActive={index === activeSection}
-            onButtonClick={section.showButton ? () => {
-              const donateIndex = sections.findIndex(s => s.id === 'donate')
-              if (donateIndex !== -1) handleNavClick(donateIndex)
-            } : undefined}
-            onAddToCart={addItem}
-          />
-        ))}
+        <AnimatePresence initial={false} custom={direction} mode="wait">
+          <motion.div
+            key={activeSection}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.45, ease: [0.77, 0, 0.175, 1] }}
+            className="absolute inset-0 w-full h-full"
+          >
+            <Section
+              {...sections[activeSection]}
+              isActive={true}
+              onButtonClick={sections[activeSection].showButton ? () => {
+                const donateIndex = sections.findIndex(s => s.id === 'donate')
+                if (donateIndex !== -1) goTo(donateIndex)
+              } : undefined}
+              onAddToCart={addItem}
+            />
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       <AnimatePresence>
