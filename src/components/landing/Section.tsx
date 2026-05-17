@@ -88,7 +88,7 @@ export default function Section({ id, title, subtitle, content, isActive, showBu
                   transition={{ duration: 0.4, delay: 0.1 + i * 0.07 }}
                   style={{ borderColor: rank.color + '55' }}
                 >
-                  <div className="relative h-44 overflow-hidden">
+                  <div className="relative aspect-video overflow-hidden">
                     <img
                       src={rank.image}
                       alt={rank.name}
