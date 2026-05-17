@@ -16,11 +16,19 @@ export interface SocialLink {
   color: string
 }
 
+export interface FeatureItem {
+  icon: string
+  title: string
+  description: string
+}
+
 export interface Section {
   id: string
   title: string
   subtitle?: ReactNode
   content?: string
+  logo?: string
+  featureList?: FeatureItem[]
   showButton?: boolean
   buttonText?: string
   ip?: string
@@ -36,3 +44,5 @@ export interface SectionProps extends Section {
   onRanksRef?: (el: HTMLDivElement | null) => void
   sectionIndex?: number
 }
+
+export type { FeatureItem as FeatureItemType }

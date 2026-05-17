@@ -5,7 +5,7 @@ import Icon from "@/components/ui/icon"
 import type { SectionProps, DonateRank, SocialLink } from "@/types"
 import DonateModal from "./DonateModal"
 
-export default function Section({ id, title, subtitle, content, isActive, showButton, buttonText, ip, ranks, socials, onButtonClick, onAddToCart, onRanksRef, freeScroll }: SectionProps) {
+export default function Section({ id, title, subtitle, content, logo, featureList, isActive, showButton, buttonText, ip, ranks, socials, onButtonClick, onAddToCart, onRanksRef, freeScroll }: SectionProps) {
   const [selectedRank, setSelectedRank] = useState<DonateRank | null>(null)
 
   return (
@@ -29,14 +29,28 @@ export default function Section({ id, title, subtitle, content, isActive, showBu
             {subtitle}
           </motion.div>
         )}
-        <motion.h2
-          className="text-4xl md:text-6xl lg:text-[5rem] xl:text-[6rem] font-bold leading-[1.1] tracking-tight max-w-4xl text-white"
-          initial={{ opacity: 0, y: 50 }}
-          animate={isActive ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
-        >
-          {title}
-        </motion.h2>
+
+        {logo && (
+          <motion.img
+            src={logo}
+            alt="logo"
+            className="max-w-xs md:max-w-md lg:max-w-lg mb-6 object-contain"
+            initial={{ opacity: 0, y: 30 }}
+            animate={isActive ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5 }}
+          />
+        )}
+
+        {title && (
+          <motion.h2
+            className="text-4xl md:text-6xl lg:text-[5rem] xl:text-[6rem] font-bold leading-[1.1] tracking-tight max-w-4xl text-white"
+            initial={{ opacity: 0, y: 50 }}
+            animate={isActive ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5 }}
+          >
+            {title}
+          </motion.h2>
+        )}
 
         {content && (
           <motion.p
@@ -47,6 +61,33 @@ export default function Section({ id, title, subtitle, content, isActive, showBu
           >
             {content}
           </motion.p>
+        )}
+
+        {featureList && featureList.length > 0 && (
+          <motion.div
+            className="mt-8 grid grid-cols-2 gap-4 max-w-2xl"
+            initial={{ opacity: 0, y: 30 }}
+            animate={isActive ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            {featureList.map((f, i) => (
+              <motion.div
+                key={i}
+                className="flex gap-3 bg-white/5 border border-white/10 backdrop-blur rounded-xl p-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={isActive ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.4, delay: 0.3 + i * 0.07 }}
+              >
+                <div className="w-9 h-9 rounded-lg bg-amber-700/30 border border-amber-600/40 flex items-center justify-center flex-shrink-0">
+                  <Icon name={f.icon} size={16} className="text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-white font-semibold text-sm">{f.title}</p>
+                  <p className="text-neutral-400 text-xs mt-0.5">{f.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         )}
 
         {ip && (

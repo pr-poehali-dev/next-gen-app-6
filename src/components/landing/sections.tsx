@@ -69,8 +69,15 @@ export const sections = [
   },
   {
     id: 'features',
-    title: 'Что даёт донат?',
-    content: 'Уникальный префикс в чате, доступ к /kit, /warp и другим командам в зависимости от ранга.'
+    logo: 'https://cdn.poehali.dev/projects/7490399e-ec82-41a5-b07a-fb23138b0b97/bucket/3b70d1b8-a6ac-4d97-b1e0-e24635e96a47.png',
+    title: '',
+    content: 'Майнкрафт сервер на версии 1.19.3 в стиле средневековья.',
+    featureList: [
+      { icon: 'Swords', title: 'PvP & Выживание', description: 'Сражайся с другими игроками, строй базы и защищай своё королевство.' },
+      { icon: 'Castle', title: 'Средневековый мир', description: 'Уникальная карта с замками, деревнями и подземельями для исследования.' },
+      { icon: 'Users', title: 'Живое сообщество', description: 'Дружный чат, события и турниры каждую неделю.' },
+      { icon: 'Zap', title: 'Онлайн 24/7', description: 'Сервер работает без остановок — заходи в любое время.' },
+    ]
   },
   {
     id: 'donate',
