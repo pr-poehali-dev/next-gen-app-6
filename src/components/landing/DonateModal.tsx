@@ -1,9 +1,13 @@
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import Icon from "@/components/ui/icon"
 import type { DonateRank } from "@/types"
+
+const CHECK_NICK_URL = "https://functions.poehali.dev/de2f9439-a0ec-4ba9-bf96-fe7329b1a83c"
+
+type NickStatus = 'idle' | 'checking' | 'valid' | 'invalid' | 'not_found'
 
 interface DonateModalProps {
   rank: DonateRank | null
@@ -15,6 +19,49 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
   const [error, setError] = useState("")
   const [copied, setCopied] = useState(false)
   const [step, setStep] = useState<'form' | 'instruction'>('form')
+  const [nickStatus, setNickStatus] = useState<NickStatus>('idle')
+  const [validNick, setValidNick] = useState("")
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    const trimmed = nick.trim()
+
+    if (!trimmed) {
+      setNickStatus('idle')
+      setValidNick("")
+      return
+    }
+
+    if (trimmed.length < 3 || trimmed.length > 16) {
+      setNickStatus('invalid')
+      setValidNick("")
+      return
+    }
+
+    setNickStatus('checking')
+
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`${CHECK_NICK_URL}?nick=${encodeURIComponent(trimmed)}`)
+        const data = await res.json()
+        if (data.valid) {
+          setNickStatus('valid')
+          setValidNick(data.name)
+        } else {
+          setNickStatus('not_found')
+          setValidNick("")
+        }
+      } catch {
+        setNickStatus('idle')
+      }
+    }, 600)
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  }, [nick])
 
   if (!rank) return null
 
@@ -27,6 +74,14 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
     }
     if (nick.length < 3 || nick.length > 16) {
       setError("Ник должен быть от 3 до 16 символов")
+      return
+    }
+    if (nickStatus === 'not_found') {
+      setError("Такого ника не существует в Minecraft")
+      return
+    }
+    if (nickStatus === 'checking') {
+      setError("Подожди, идёт проверка ника...")
       return
     }
     setError("")
@@ -48,6 +103,46 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
   const handleBack = () => {
     setStep('form')
     setCopied(false)
+  }
+
+  const nickStatusIcon = () => {
+    if (nickStatus === 'checking') return (
+      <span className="animate-spin">
+        <Icon name="Loader2" size={14} className="text-neutral-400" />
+      </span>
+    )
+    if (nickStatus === 'valid') return <Icon name="CheckCircle2" size={14} className="text-green-400" />
+    if (nickStatus === 'not_found') return <Icon name="XCircle" size={14} className="text-red-400" />
+    if (nickStatus === 'invalid') return <Icon name="AlertCircle" size={14} className="text-yellow-400" />
+    return null
+  }
+
+  const nickHint = () => {
+    if (nickStatus === 'valid') return (
+      <p className="text-green-400 text-xs mt-1.5 flex items-center gap-1">
+        <Icon name="CheckCircle2" size={12} />
+        Ник найден: <span className="font-semibold">{validNick}</span>
+      </p>
+    )
+    if (nickStatus === 'not_found') return (
+      <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
+        <Icon name="XCircle" size={12} />
+        Такого ника нет в Minecraft
+      </p>
+    )
+    if (nickStatus === 'invalid') return (
+      <p className="text-yellow-400 text-xs mt-1.5 flex items-center gap-1">
+        <Icon name="AlertCircle" size={12} />
+        Ник должен быть от 3 до 16 символов
+      </p>
+    )
+    if (nickStatus === 'checking') return (
+      <p className="text-neutral-500 text-xs mt-1.5 flex items-center gap-1">
+        <Icon name="Loader2" size={12} className="animate-spin" />
+        Проверяем ник...
+      </p>
+    )
+    return null
   }
 
   return (
@@ -115,13 +210,21 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
                   <label className="block text-sm text-neutral-400 mb-2">
                     Твой ник в Minecraft
                   </label>
-                  <Input
-                    placeholder="Например: Steve123"
-                    value={nick}
-                    onChange={e => { setNick(e.target.value); setError("") }}
-                    className="bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus:border-green-500"
-                    maxLength={16}
-                  />
+                  <div className="relative">
+                    <Input
+                      placeholder="Например: Steve123"
+                      value={nick}
+                      onChange={e => { setNick(e.target.value); setError("") }}
+                      className="bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus:border-green-500 pr-8"
+                      maxLength={16}
+                    />
+                    {nick.trim().length >= 3 && (
+                      <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                        {nickStatusIcon()}
+                      </div>
+                    )}
+                  </div>
+                  {nickHint()}
                   {error && (
                     <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
                       <Icon name="AlertCircle" size={12} />
@@ -134,6 +237,7 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
                   className="w-full font-semibold text-black text-base py-5"
                   style={{ backgroundColor: rank.color }}
                   onClick={handleSubmit}
+                  disabled={nickStatus === 'checking'}
                 >
                   <span className="flex items-center gap-2">
                     <Icon name="Heart" size={16} />

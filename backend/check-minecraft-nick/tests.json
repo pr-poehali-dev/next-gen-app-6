@@ -1,0 +1,28 @@
+{
+  "tests": [
+    {
+      "name": "Valid nick - Notch",
+      "method": "GET",
+      "path": "/?nick=Notch",
+      "expectedStatus": 200,
+      "expectedBody": "valid",
+      "bodyMatcher": "contains"
+    },
+    {
+      "name": "Invalid nick",
+      "method": "GET",
+      "path": "/?nick=FakeNick99999",
+      "expectedStatus": 200,
+      "expectedBody": "not_found",
+      "bodyMatcher": "contains"
+    },
+    {
+      "name": "Empty nick",
+      "method": "GET",
+      "path": "/?nick=",
+      "expectedStatus": 400,
+      "expectedBody": "empty",
+      "bodyMatcher": "contains"
+    }
+  ]
+}
