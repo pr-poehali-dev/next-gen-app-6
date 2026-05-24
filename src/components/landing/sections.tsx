@@ -8,47 +8,62 @@ export const donateRanks: DonateRank[] = [
     price: 5000,
     image: 'https://cdn.poehali.dev/projects/7490399e-ec82-41a5-b07a-fb23138b0b97/bucket/27c196c7-726e-47ed-881d-c200e45e6c7c.jpeg',
     color: '#FFD700',
-    perks: ['[Король] в чате', '/god', '/fly', '/gamemode', '/warp']
+    chatTag: { label: 'Король', labelColor: '#FFD700', bracketColor: '#FFD700' },
+    perks: ['/god', '/fly', '/gamemode', '/warp']
+  },
+  {
+    id: 'dragon',
+    name: 'Дракон',
+    price: 299,
+    image: 'https://cdn.poehali.dev/projects/7490399e-ec82-41a5-b07a-fb23138b0b97/bucket/8263aad1-b031-480c-b7c2-df6f81b62c14.jpeg',
+    color: '#9B30FF',
+    chatTag: { label: 'Дракон', labelColor: '#9B30FF', bracketColor: '#FFD700' },
+    perks: ['/kit дракона', '/fly', '/warp']
   },
   {
     id: 'knight',
     name: 'Рыцарь',
-    price: 300,
+    price: 459,
     image: 'https://cdn.poehali.dev/projects/7490399e-ec82-41a5-b07a-fb23138b0b97/bucket/3b10919e-196b-41ef-b969-ed5680cd989a.jpeg',
     color: '#C0C0C0',
-    perks: ['[Рыцарь] в чате', '/kit рыцаря', '/warp']
+    chatTag: { label: 'Рыцарь', labelColor: '#C0C0C0', bracketColor: '#FFD700' },
+    perks: ['/kit рыцаря', '/warp']
   },
   {
     id: 'mage',
     name: 'Маг',
-    price: 150,
+    price: 149,
     image: 'https://cdn.poehali.dev/projects/7490399e-ec82-41a5-b07a-fb23138b0b97/bucket/f4680613-d861-4e83-9f90-980e3c4e067a.jpeg',
     color: '#9B59B6',
-    perks: ['[Маг] в чате', '/kit с зельями', '/warp']
+    chatTag: { label: 'Маг', labelColor: '#9B59B6', bracketColor: '#FFD700' },
+    perks: ['/kit с зельями', '/warp']
   },
   {
     id: 'creeper',
     name: 'Крипер',
-    price: 60,
+    price: 59,
     image: 'https://cdn.poehali.dev/projects/7490399e-ec82-41a5-b07a-fb23138b0b97/bucket/85f0ae13-c9ea-40f4-b381-b2d6473ea6ef.jpeg',
     color: '#2ECC40',
-    perks: ['[Крипер] в чате', '/kit крипера']
+    chatTag: { label: 'Крипер', labelColor: '#2ECC40', bracketColor: '#FFD700' },
+    perks: ['/kit крипера']
   },
   {
     id: 'skeleton',
     name: 'Скелет',
-    price: 50,
+    price: 49,
     image: 'https://cdn.poehali.dev/projects/7490399e-ec82-41a5-b07a-fb23138b0b97/bucket/e727b3f7-eeb0-4eba-9459-6e66f6daeb89.jpeg',
     color: '#EEEEEE',
-    perks: ['[Скелет] в чате', '/kit скелета']
+    chatTag: { label: 'Скелет', labelColor: '#EEEEEE', bracketColor: '#FFD700' },
+    perks: ['/kit скелета']
   },
   {
     id: 'zombie',
     name: 'Зомби',
-    price: 50,
+    price: 49,
     image: 'https://cdn.poehali.dev/projects/7490399e-ec82-41a5-b07a-fb23138b0b97/bucket/fa5390c2-ac8d-49a2-9311-a5eece7a526f.jpeg',
     color: '#4CAF50',
-    perks: ['[Зомби] в чате', '/kit зомби']
+    chatTag: { label: 'Зомби', labelColor: '#4CAF50', bracketColor: '#FFD700' },
+    perks: ['/kit зомби']
   },
 ]
 

@@ -123,26 +123,78 @@ export default function Section({ id, title, subtitle, content, logo, featureLis
             animate={isActive ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
+            {/* Король — первый, занимает всю ширину по центру */}
+            {ranks.filter(r => r.id === 'king').map((rank, i) => (
+              <motion.div
+                key={rank.id}
+                className="relative flex flex-col rounded-2xl overflow-hidden border bg-white/5 backdrop-blur cursor-pointer group mb-4 max-w-sm mx-auto"
+                initial={{ opacity: 0, y: 30 }}
+                animate={isActive ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.4, delay: 0.1 + i * 0.07 }}
+                style={{ borderColor: rank.color + '88' }}
+              >
+                <div className="relative aspect-video overflow-hidden">
+                  <img src={rank.image} alt={rank.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                  <div className="absolute bottom-3 left-0 right-0 flex justify-center">
+                    <span className="font-bold text-xs px-2 py-0.5 rounded-md" style={{ color: rank.chatTag?.bracketColor ?? rank.color, backgroundColor: rank.color + '33', border: `1px solid ${rank.color}55` }}>
+                      <span style={{ color: rank.chatTag?.bracketColor ?? rank.color }}>[</span>
+                      <span style={{ color: rank.chatTag?.labelColor ?? rank.color }}>{rank.chatTag?.label ?? rank.name}</span>
+                      <span style={{ color: rank.chatTag?.bracketColor ?? rank.color }}>]</span>
+                    </span>
+                  </div>
+                </div>
+                <div className="p-4 flex flex-col gap-3 flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-white text-base">{rank.name}</span>
+                    <span className="font-bold text-lg" style={{ color: rank.color }}>{rank.price} ₽</span>
+                  </div>
+                  <ul className="flex flex-col gap-1.5 flex-1">
+                    {rank.chatTag && (
+                      <li className="flex items-center gap-2 text-xs">
+                        <Icon name="Check" size={11} className="flex-shrink-0" style={{ color: rank.color }} />
+                        <span style={{ color: rank.chatTag.bracketColor }}>[</span>
+                        <span style={{ color: rank.chatTag.labelColor }}>{rank.chatTag.label}</span>
+                        <span style={{ color: rank.chatTag.bracketColor }}>]</span>
+                        <span className="text-neutral-300">в чате</span>
+                      </li>
+                    )}
+                    {rank.perks.map((perk, j) => (
+                      <li key={j} className="flex items-center gap-2 text-neutral-300 text-xs">
+                        <Icon name="Check" size={11} className="flex-shrink-0" style={{ color: rank.color }} />
+                        {perk}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="flex gap-2 mt-2">
+                    <Button size="sm" className="flex-1 text-xs font-semibold" style={{ backgroundColor: rank.color, color: '#000' }} onClick={() => setSelectedRank(rank)}>Купить</Button>
+                    <Button size="sm" variant="outline" className="px-3 border-purple-500/50 text-purple-400 hover:bg-purple-600 hover:text-white hover:border-purple-600 transition-colors" onClick={() => onAddToCart?.(rank)} title="В корзину">
+                      <Icon name="ShoppingCart" size={14} />
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+
+            {/* Остальные ранги — сетка 2 колонки */}
             <div className="grid grid-cols-2 gap-4 pb-4">
-              {ranks.map((rank, i) => (
+              {ranks.filter(r => r.id !== 'king').map((rank, i) => (
                 <motion.div
                   key={rank.id}
                   className="relative flex flex-col rounded-2xl overflow-hidden border bg-white/5 backdrop-blur cursor-pointer group"
                   initial={{ opacity: 0, y: 30 }}
                   animate={isActive ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.4, delay: 0.1 + i * 0.07 }}
+                  transition={{ duration: 0.4, delay: 0.2 + i * 0.07 }}
                   style={{ borderColor: rank.color + '55' }}
                 >
                   <div className="relative aspect-video overflow-hidden">
-                    <img
-                      src={rank.image}
-                      alt={rank.name}
-                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-                    />
+                    <img src={rank.image} alt={rank.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                     <div className="absolute bottom-3 left-3 right-3">
-                      <span className="font-bold text-xs px-2 py-0.5 rounded-md" style={{ color: rank.color, backgroundColor: rank.color + '33', border: `1px solid ${rank.color}55` }}>
-                        [{rank.name}]
+                      <span className="font-bold text-xs px-2 py-0.5 rounded-md" style={{ backgroundColor: rank.color + '22', border: `1px solid ${rank.color}44` }}>
+                        <span style={{ color: rank.chatTag?.bracketColor ?? '#FFD700' }}>[</span>
+                        <span style={{ color: rank.chatTag?.labelColor ?? rank.color }}>{rank.chatTag?.label ?? rank.name}</span>
+                        <span style={{ color: rank.chatTag?.bracketColor ?? '#FFD700' }}>]</span>
                       </span>
                     </div>
                   </div>
@@ -152,6 +204,15 @@ export default function Section({ id, title, subtitle, content, logo, featureLis
                       <span className="font-bold text-lg" style={{ color: rank.color }}>{rank.price} ₽</span>
                     </div>
                     <ul className="flex flex-col gap-1.5 flex-1">
+                      {rank.chatTag && (
+                        <li className="flex items-center gap-2 text-xs">
+                          <Icon name="Check" size={11} className="flex-shrink-0" style={{ color: rank.color }} />
+                          <span style={{ color: rank.chatTag.bracketColor }}>[</span>
+                          <span style={{ color: rank.chatTag.labelColor }}>{rank.chatTag.label}</span>
+                          <span style={{ color: rank.chatTag.bracketColor }}>]</span>
+                          <span className="text-neutral-300">в чате</span>
+                        </li>
+                      )}
                       {rank.perks.map((perk, j) => (
                         <li key={j} className="flex items-center gap-2 text-neutral-300 text-xs">
                           <Icon name="Check" size={11} className="flex-shrink-0" style={{ color: rank.color }} />
@@ -160,21 +221,8 @@ export default function Section({ id, title, subtitle, content, logo, featureLis
                       ))}
                     </ul>
                     <div className="flex gap-2 mt-2">
-                      <Button
-                        size="sm"
-                        className="flex-1 text-xs font-semibold"
-                        style={{ backgroundColor: rank.color, color: '#000' }}
-                        onClick={() => setSelectedRank(rank)}
-                      >
-                        Купить
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="px-3 border-purple-500/50 text-purple-400 hover:bg-purple-600 hover:text-white hover:border-purple-600 transition-colors"
-                        onClick={() => onAddToCart?.(rank)}
-                        title="В корзину"
-                      >
+                      <Button size="sm" className="flex-1 text-xs font-semibold" style={{ backgroundColor: rank.color, color: '#000' }} onClick={() => setSelectedRank(rank)}>Купить</Button>
+                      <Button size="sm" variant="outline" className="px-3 border-purple-500/50 text-purple-400 hover:bg-purple-600 hover:text-white hover:border-purple-600 transition-colors" onClick={() => onAddToCart?.(rank)} title="В корзину">
                         <Icon name="ShoppingCart" size={14} />
                       </Button>
                     </div>

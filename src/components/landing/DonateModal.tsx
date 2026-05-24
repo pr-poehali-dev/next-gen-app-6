@@ -100,6 +100,15 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
                 transition={{ duration: 0.2 }}
               >
                 <ul className="flex flex-wrap gap-2 mb-5">
+                  {rank.chatTag && (
+                    <li className="flex items-center gap-1.5 text-xs bg-white/5 rounded-lg px-3 py-1.5">
+                      <Icon name="Check" size={10} style={{ color: rank.color }} />
+                      <span style={{ color: rank.chatTag.bracketColor }}>[</span>
+                      <span style={{ color: rank.chatTag.labelColor }}>{rank.chatTag.label}</span>
+                      <span style={{ color: rank.chatTag.bracketColor }}>]</span>
+                      <span className="text-neutral-300 ml-1">в чате</span>
+                    </li>
+                  )}
                   {rank.perks.map((perk, i) => (
                     <li
                       key={i}

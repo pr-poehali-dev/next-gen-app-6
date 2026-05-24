@@ -1,11 +1,18 @@
 import type { ReactNode } from "react"
 
+export interface ChatTag {
+  label: string
+  labelColor: string
+  bracketColor: string
+}
+
 export interface DonateRank {
   id: string
   name: string
   price: number
   image: string
   color: string
+  chatTag?: ChatTag
   perks: string[]
 }
 
