@@ -5,29 +5,29 @@ export const donateRanks: DonateRank[] = [
   {
     id: 'king',
     name: 'Король',
-    price: 5000,
+    price: 4999,
     image: 'https://cdn.poehali.dev/projects/7490399e-ec82-41a5-b07a-fb23138b0b97/bucket/27c196c7-726e-47ed-881d-c200e45e6c7c.jpeg',
     color: '#FFD700',
     chatTag: { label: 'Король', labelColor: '#FFD700', bracketColor: '#FFD700' },
     perks: ['/god', '/fly', '/gamemode', '/warp']
   },
   {
-    id: 'dragon',
-    name: 'Дракон',
-    price: 299,
-    image: 'https://cdn.poehali.dev/projects/7490399e-ec82-41a5-b07a-fb23138b0b97/bucket/8263aad1-b031-480c-b7c2-df6f81b62c14.jpeg',
-    color: '#9B30FF',
-    chatTag: { label: 'Дракон', labelColor: '#9B30FF', bracketColor: '#FFD700' },
-    perks: ['/kit дракона', '/fly', '/warp']
-  },
-  {
     id: 'knight',
     name: 'Рыцарь',
-    price: 459,
+    price: 499,
     image: 'https://cdn.poehali.dev/projects/7490399e-ec82-41a5-b07a-fb23138b0b97/bucket/3b10919e-196b-41ef-b969-ed5680cd989a.jpeg',
     color: '#C0C0C0',
     chatTag: { label: 'Рыцарь', labelColor: '#C0C0C0', bracketColor: '#FFD700' },
     perks: ['/kit рыцаря', '/warp']
+  },
+  {
+    id: 'dragon',
+    name: 'Дракон',
+    price: 399,
+    image: 'https://cdn.poehali.dev/projects/7490399e-ec82-41a5-b07a-fb23138b0b97/bucket/8263aad1-b031-480c-b7c2-df6f81b62c14.jpeg',
+    color: '#9B30FF',
+    chatTag: { label: 'Дракон', labelColor: '#9B30FF', bracketColor: '#FFD700' },
+    perks: ['/kit дракона', '/fly', '/warp']
   },
   {
     id: 'mage',
