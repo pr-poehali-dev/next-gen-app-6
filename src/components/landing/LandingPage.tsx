@@ -33,6 +33,11 @@ export default function LandingPage() {
 
   const setRanksRef = useCallback((el: HTMLDivElement | null) => {
     ranksScrollRef.current = el
+    if (el) {
+      requestAnimationFrame(() => {
+        el.scrollTop = el.scrollHeight
+      })
+    }
   }, [])
 
   const goTo = (index: number) => {
