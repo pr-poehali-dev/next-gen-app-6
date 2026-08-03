@@ -29,6 +29,19 @@ CALC_SERVICES = {
     "Minecraft-сайт",
 }
 
+# Расширения файлов, которые считаются видео
+VIDEO_EXTENSIONS = (".mp4", ".mov", ".avi", ".mkv", ".webm", ".flv", ".wmv")
+
+
+def is_video_document(document) -> bool:
+    """Проверяет, является ли присланный документ видеофайлом."""
+    if document.mime_type and document.mime_type.startswith("video/"):
+        return True
+    if document.file_name and document.file_name.lower().endswith(VIDEO_EXTENSIONS):
+        return True
+    return False
+
+
 # Соответствие callback_data -> название услуги
 SERVICE_MAP = {
     "service_skin": "Скин",
@@ -88,7 +101,7 @@ async def choose_service(callback: CallbackQuery, state: FSMContext):
         return
 
     await state.clear()
-    await state.update_data(service=service, description="", photos=[], documents=[], skin_file=None)
+    await state.update_data(service=service, description="", photos=[], documents=[], skin_file=None, video_received=False)
 
     if service == "Решейд скина":
         text = (
@@ -118,6 +131,13 @@ async def choose_service(callback: CallbackQuery, state: FSMContext):
             "• цвета\n"
             "• детали\n\n"
             "Если хотите, можете приложить фотографии или файлы с референсами."
+        )
+    elif service == "Монтаж видео":
+        text = (
+            "Опишите заказ максимально подробно.\n\n"
+            "Обязательно прикрепите видео ФАЙЛОМ (как документ, не сжатым видео-сообщением).\n"
+            "Можно также приложить фотографии и другие референсы.\n"
+            "После отправки нажмите «Готово»."
         )
     else:
         text = (
@@ -169,18 +189,35 @@ async def receive_description(message: Message, state: FSMContext):
     )
 
 
-@router.message(OrderState.waiting_description, F.photo | F.document)
+@router.message(OrderState.waiting_description, F.photo | F.document | F.video)
 async def receive_files(message: Message, state: FSMContext):
     data = await state.get_data()
+    service = data.get("service")
     photos = data.get("photos", [])
     documents = data.get("documents", [])
+    video_received = data.get("video_received", False)
 
     if message.photo:
         photos.append(message.photo[-1].file_id)
     elif message.document:
         documents.append(message.document.file_id)
+        if service == "Монтаж видео" and is_video_document(message.document):
+            video_received = True
+    elif message.video:
+        # Видео прислано сжатым сообщением, а не файлом-документом —
+        # для монтажа это не подходит, предупредим отдельно ниже
+        documents.append(message.video.file_id)
 
-    await state.update_data(photos=photos, documents=documents)
+    await state.update_data(photos=photos, documents=documents, video_received=video_received)
+
+    if service == "Монтаж видео" and message.video and not video_received:
+        await message.answer(
+            "Это видео отправлено сжатым сообщением. Пришлите его, пожалуйста, ФАЙЛОМ "
+            "(скрепка → Файл), иначе заказ оформить не получится.",
+            reply_markup=order_menu()
+        )
+        return
+
     await message.answer(
         "Файл сохранён.\nНе забудьте отправить текстовое описание, затем нажмите «Готово».",
         reply_markup=order_menu()
@@ -197,6 +234,13 @@ async def order_done(callback: CallbackQuery, state: FSMContext):
 
     if not description:
         await callback.answer("Сначала отправьте описание заказа!", show_alert=True)
+        return
+
+    if service == "Монтаж видео" and not data.get("video_received"):
+        await callback.answer(
+            "Сначала отправьте видео ФАЙЛОМ (как документ, не сжатым видео-сообщением)!",
+            show_alert=True
+        )
         return
 
     user = callback.from_user
