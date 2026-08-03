@@ -2,11 +2,13 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
+from aiogram.fsm.storage.base import StorageKey
 
 from config import config
 from keyboards import main_menu, order_menu, payment_menu, back_menu
 from states import OrderState, AdminState
 from database import db
+from fsm_storage import storage
 
 router = Router()
 
@@ -346,6 +348,17 @@ async def set_price(message: Message):
         f"Номер: {config.PAYMENT_NUMBER}\n"
         f"Получатель: {config.RECIPIENT_NAME}\n\n"
         "После оплаты отправьте сюда скрин чека."
+    )
+
+    # Переводим клиента в режим ожидания скрина оплаты,
+    # чтобы бот принял и переслал фото администратору
+    client_key = StorageKey(bot_id=message.bot.id, chat_id=order["user_id"], user_id=order["user_id"])
+    client_state = FSMContext(storage=storage, key=client_key)
+    await client_state.set_state(OrderState.waiting_payment)
+    await client_state.update_data(
+        order_number=number,
+        service=order["service"],
+        description=order["description"],
     )
 
     await message.answer(

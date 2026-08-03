@@ -6,6 +6,7 @@ from aiogram.enums import ParseMode
 
 from config import config
 from handlers import router
+from fsm_storage import storage
 
 
 async def main():
@@ -14,7 +15,7 @@ async def main():
         default=DefaultBotProperties(parse_mode=ParseMode.HTML)
     )
 
-    dp = Dispatcher()
+    dp = Dispatcher(storage=storage)
     dp.include_router(router)
 
     print(f"{config.STUDIO_NAME} — бот запущен!")
