@@ -54,9 +54,12 @@ class Database:
         documents: Optional[List[str]] = None,
         skin_file: Optional[str] = None,
     ) -> str:
-        data = self._load()
+        # Сначала увеличиваем и сохраняем счётчик номера заказа
         number = self.generate_order_number()
 
+        # Затем загружаем СВЕЖУЮ копию данных (уже с обновлённым last_order)
+        # и добавляем в неё сам заказ — чтобы не перезаписать счётчик старым значением
+        data = self._load()
         data["orders"][number] = {
             "number": number,
             "user_id": user_id,
