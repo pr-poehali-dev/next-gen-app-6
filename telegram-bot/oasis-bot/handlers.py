@@ -354,6 +354,39 @@ async def receive_payment(message: Message, state: FSMContext):
     await state.clear()
 
 
+@router.message(F.photo)
+async def receive_payment_fallback(message: Message, state: FSMContext):
+    """
+    Подстраховка: если FSM-состояние клиента было потеряно (например, из-за
+    перезапуска бота), но в базе данных есть его заказ со статусом
+    «ожидание оплаты» — всё равно принимаем скрин чека и пересылаем админу.
+    """
+    order = db.get_user_order_by_status(message.from_user.id, "waiting_payment")
+    if not order:
+        return
+
+    caption = (
+        f"Новый оплаченный заказ #{order['number']}!\n\n"
+        f"Услуга: {order['service']}\n"
+        f"Клиент: @{message.from_user.username or 'нет'}\n"
+        f"ID: {message.from_user.id}\n\n"
+        f"Описание:\n{order['description']}"
+    )
+
+    await message.bot.send_photo(
+        config.ADMIN_ID,
+        photo=message.photo[-1].file_id,
+        caption=caption
+    )
+
+    db.update_status(order["number"], "paid")
+
+    await message.answer(
+        "Скрин оплаты получен!\nМы проверим оплату и начнём работу."
+    )
+    await state.clear()
+
+
 # ==================== АДМИНСКИЕ КОМАНДЫ ====================
 
 @router.message(Command("price"))
