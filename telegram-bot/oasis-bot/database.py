@@ -25,7 +25,11 @@ class Database:
 
     def _load(self) -> Dict:
         with open(self.db_file, "r", encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f)
+        # Защита от повреждённого или неполного файла базы
+        data.setdefault("last_order", 0)
+        data.setdefault("orders", {})
+        return data
 
     def _save(self, data: Dict):
         with open(self.db_file, "w", encoding="utf-8") as f:
