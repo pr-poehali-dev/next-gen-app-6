@@ -163,7 +163,7 @@ export default function CartDrawer({ items, total, onRemove, onClose }: CartDraw
                   <div className="space-y-3">
                     {[
                       { icon: 'MousePointerClick', color: 'text-blue-400', text: <><span className="text-white font-semibold">Открой DonationAlerts</span> по кнопке ниже</> },
-                      { icon: 'RussianRuble', color: 'text-green-400', text: <>Укажи сумму <span className="text-white font-semibold">{total} ₽</span> (или больше)</> },
+                      { icon: 'RussianRuble', color: 'text-green-400', text: <>Укажи сумму <span className="text-white font-semibold">{total} ₽</span></> },
                       { icon: 'ClipboardPaste', color: 'text-yellow-400', text: <>В поле <span className="text-white font-semibold">"Сообщение"</span> вставь текст (Ctrl+V)</> },
                       { icon: 'Clock', color: 'text-pink-400', text: <>Ранги выдаются <span className="text-white font-semibold">в течение 2 дней</span></> },
                     ].map((item, i) => (

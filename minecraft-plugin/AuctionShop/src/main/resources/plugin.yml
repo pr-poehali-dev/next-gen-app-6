@@ -1,0 +1,27 @@
+name: AuctionShop
+version: '1.0.0'
+main: me.oasis.auctionshop.AuctionShopPlugin
+api-version: '1.19'
+author: Oasis
+description: Аукцион и постоянный магазин с сортировкой по цене и категориям
+
+commands:
+  ah:
+    description: Открыть аукцион
+    aliases: [auc, auction]
+    usage: "/<command> [sell <цена> | mail | my]"
+  shop:
+    description: Открыть магазин сервера
+    usage: "/<command> [additem <покупка> <продажа> | removeitem <id>]"
+  balance:
+    description: Показать баланс монет
+    aliases: [bal, money]
+    usage: "/<command> [ник] [give <ник> <сумма>]"
+
+permissions:
+  auctionshop.admin:
+    description: Доступ к управлению магазином и выдаче монет
+    default: op
+  auctionshop.use:
+    description: Доступ к использованию аукциона и магазина
+    default: true

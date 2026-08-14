@@ -80,7 +80,7 @@ export const sections = [
     id: 'ip',
     title: 'Заходи и играй',
     content: 'Подключайся прямо сейчас — сервер онлайн 24/7',
-    ip: 'd2.atlantix.me:25054'
+    ip: 'd2.atlantix.me:25085'
   },
   {
     id: 'features',

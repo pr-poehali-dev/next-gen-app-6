@@ -179,7 +179,7 @@ export default function DonateModal({ rank, onClose }: DonateModalProps) {
                 <div className="space-y-3 mb-5">
                   {[
                     { icon: "MousePointerClick", color: "text-blue-400", text: <>Нажми <span className="text-white font-semibold">"Открыть DonationAlerts"</span> ниже</> },
-                    { icon: "RussianRuble", color: "text-green-400", text: <>Укажи сумму <span className="text-white font-semibold">{rank.price} ₽</span> (или больше)</> },
+                    { icon: "RussianRuble", color: "text-green-400", text: <>Укажи сумму <span className="text-white font-semibold">{rank.price} ₽</span></> },
                     { icon: "ClipboardPaste", color: "text-yellow-400", text: <>В поле <span className="text-white font-semibold">"Сообщение"</span> вставь текст (Ctrl+V)</> },
                     { icon: "Clock", color: "text-pink-400", text: <>Ранг выдаётся администратором <span className="text-white font-semibold">в течение 2 дней</span></> },
                   ].map((item, i) => (
