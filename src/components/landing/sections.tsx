@@ -112,7 +112,7 @@ export const sections = [
     socials: [
       {
         label: 'Telegram',
-        url: 'https://t.me/Shebls_say',
+        url: 'https://t.me/+sDGA86xxz4oyYTAy',
         icon: 'Send',
         color: '#29B6F6',
       },
