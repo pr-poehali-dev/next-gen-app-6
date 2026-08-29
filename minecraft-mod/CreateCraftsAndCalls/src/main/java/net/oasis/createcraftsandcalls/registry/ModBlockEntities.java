@@ -6,7 +6,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.oasis.createcraftsandcalls.CreateCraftsAndCalls;
 import net.oasis.createcraftsandcalls.blockentity.PhoneBlockEntity;
-import net.oasis.createcraftsandcalls.blockentity.StationBlockEntity;
+import net.oasis.createcraftsandcalls.station.StationBlockEntity;
 
 /**
  * Регистрация типов блок-сущностей (данные телефона и станции).

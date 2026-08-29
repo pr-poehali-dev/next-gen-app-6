@@ -1,14 +1,19 @@
 package net.oasis.createcraftsandcalls.blockentity;
 
+import com.mrh0.createaddition.blocks.connector.ConnectorType;
+import com.mrh0.createaddition.energy.IWireNode;
+import com.mrh0.createaddition.energy.LocalNode;
+import com.mrh0.createaddition.energy.WireType;
+import com.mrh0.createaddition.energy.network.EnergyNetwork;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.oasis.createcraftsandcalls.registry.ModBlockEntities;
+import net.oasis.createcraftsandcalls.station.StationBlockEntity;
+import net.oasis.createcraftsandcalls.station.StationGroup;
 import net.oasis.createcraftsandcalls.voicechat.VoicechatBridge;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,19 +21,29 @@ import java.util.UUID;
 
 /**
  * Данные телефонного аппарата: снята ли трубка, к какому порту станции
- * подключён этот телефон (по координатам блока станции + номеру гнезда),
- * и владелец телефона (UUID игрока, который в последний раз был привязан к
- * этому аппарату — заполняется при первом подключении кабеля).
+ * подключён этот телефон, и владелец телефона (UUID игрока, привязанного к
+ * этому аппарату при первом поднятии трубки).
+ * <p>
+ * Реализует {@link IWireNode} с одним-единственным гнездом (индекс 0) —
+ * именно поэтому медную катушку провода Create: Crafts & Additions можно
+ * дотянуть от станции прямо до телефона (ТЗ п.3.1: "К нему подводится
+ * медный провод от Коммутатора").
  */
-public class PhoneBlockEntity extends BlockEntity {
+public class PhoneBlockEntity extends BlockEntity implements IWireNode {
+
+    private static final int MAX_WIRE_LENGTH = 12;
 
     private boolean handsetLifted = false;
     private UUID boundPlayer;
 
-    /** Позиция станции, к которой физически подключён этот телефон медным/телефонным кабелем. */
+    /** Позиция "главного" блока станции, к которой физически подключён этот телефон. */
     private BlockPos linkedStationPos;
-    /** Номер порта на станции (0..3 на блок станции, суммарно по всей мультиблочной станции). */
+    /** Глобальный номер порта на станции (по всей мультиблочной группе). */
     private int linkedPortIndex = -1;
+
+    private final LocalNode[] localNodes = new LocalNode[1];
+    private final IWireNode[] nodeCache = new IWireNode[1];
+    private EnergyNetwork network;
 
     public PhoneBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.PHONE.get(), pos, state);
@@ -101,6 +116,81 @@ public class PhoneBlockEntity extends BlockEntity {
         }
     }
 
+    // ----- IWireNode: провод от станции подключается сюда как в обычный разъём -----
+
+    @Override
+    public IWireNode getWireNode(int index) {
+        return IWireNode.getWireNodeFrom(index, this, localNodes, nodeCache, level);
+    }
+
+    @Override
+    public LocalNode getLocalNode(int index) {
+        return localNodes[0];
+    }
+
+    @Override
+    public void setNode(int index, int otherIndex, BlockPos otherPos, WireType type) {
+        localNodes[0] = new LocalNode(this, 0, otherIndex, type, otherPos);
+        setChanged();
+        if (network != null) {
+            network.invalidate();
+        }
+
+        if (level != null && level.getBlockEntity(otherPos) instanceof StationBlockEntity station) {
+            BlockPos origin = StationGroup.findOrigin(level, otherPos);
+            int globalIndex = StationGroup.globalPortIndex(level, otherPos, otherIndex);
+            station.registerPhone(otherIndex, worldPosition);
+            setLink(origin, globalIndex);
+        }
+    }
+
+    @Override
+    public void removeNode(int index, boolean dropWire) {
+        localNodes[0] = null;
+        nodeCache[0] = null;
+        invalidateNodeCache();
+        setChanged();
+        if (network != null) {
+            network.invalidate();
+        }
+        clearLink();
+    }
+
+    @Override
+    public Vec3 getNodeOffset(int index) {
+        return new Vec3(0.5, 0.9, 0.5);
+    }
+
+    @Override
+    public BlockPos getPos() {
+        return worldPosition;
+    }
+
+    @Override
+    public void invalidateNodeCache() {
+        nodeCache[0] = null;
+    }
+
+    @Override
+    public void setNetwork(int index, EnergyNetwork network) {
+        this.network = network;
+    }
+
+    @Override
+    public EnergyNetwork getNetwork(int index) {
+        return network;
+    }
+
+    @Override
+    public ConnectorType getConnectorType() {
+        return ConnectorType.Small;
+    }
+
+    @Override
+    public int getMaxWireLength() {
+        return MAX_WIRE_LENGTH;
+    }
+
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
@@ -111,6 +201,11 @@ public class PhoneBlockEntity extends BlockEntity {
         if (linkedStationPos != null) {
             tag.putLong("LinkedStationPos", linkedStationPos.asLong());
             tag.putInt("LinkedPortIndex", linkedPortIndex);
+        }
+        if (localNodes[0] != null) {
+            CompoundTag nodeTag = new CompoundTag();
+            localNodes[0].write(nodeTag);
+            tag.put("Node", nodeTag);
         }
     }
 
@@ -126,12 +221,17 @@ public class PhoneBlockEntity extends BlockEntity {
             linkedStationPos = null;
             linkedPortIndex = -1;
         }
+        if (tag.contains("Node")) {
+            localNodes[0] = new LocalNode(this, tag.getCompound("Node"));
+        } else {
+            localNodes[0] = null;
+        }
     }
 
     @Nullable
     @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override

@@ -6,15 +6,19 @@ import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.oasis.createcraftsandcalls.CreateCraftsAndCalls;
-import net.oasis.createcraftsandcalls.item.PhoneCableItem;
-import net.oasis.createcraftsandcalls.item.RouteWrenchItem;
 
 /**
- * Регистрация всех предметов мода: предметы-блоки (телефон, станция),
- * телефонный кабель (для физического соединения телефона со станцией)
- * и вспомогательный предмет "маршрутный ключ" — на случай, если игрок
- * не использует ключ Create (обычный гаечный ключ Create тоже работает,
- * см. StationBlock#use).
+ * Регистрация предметов-блоков мода: телефонный аппарат и телефонная станция.
+ * <p>
+ * Отдельный предмет "медный провод" не регистрируется — для физического
+ * соединения телефона со станцией используется штатная медная катушка
+ * (Wire Spool) из мода Create: Crafts & Additions, как и требуется по ТЗ.
+ * Оба наших блока реализуют интерфейс {@code IWireNode} из C&A, поэтому
+ * катушка провода C&A уже "из коробки" умеет соединять их между собой.
+ * <p>
+ * Отдельный "маршрутный ключ" тоже не нужен — телефонная станция реализует
+ * {@code IWrenchable} из Create, поэтому обычный гаечный ключ Create
+ * (Shift+ПКМ) сразу запускает режим переключения маршрутов.
  */
 public class ModItems {
 
@@ -28,12 +32,4 @@ public class ModItems {
     public static final DeferredItem<BlockItem> STATION = REGISTER.registerItem("station",
             props -> new BlockItem(ModBlocks.STATION.get(), props),
             new Item.Properties());
-
-    public static final DeferredItem<PhoneCableItem> PHONE_CABLE = REGISTER.registerItem("phone_cable",
-            PhoneCableItem::new,
-            new Item.Properties());
-
-    public static final DeferredItem<RouteWrenchItem> ROUTE_WRENCH = REGISTER.registerItem("route_wrench",
-            RouteWrenchItem::new,
-            new Item.Properties().stacksTo(1));
 }

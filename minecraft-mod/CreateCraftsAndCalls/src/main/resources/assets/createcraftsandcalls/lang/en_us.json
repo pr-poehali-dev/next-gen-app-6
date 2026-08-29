@@ -1,0 +1,14 @@
+{
+  "itemGroup.createcraftsandcalls": "Create Crafts & Calls",
+  "block.createcraftsandcalls.phone": "Telephone",
+  "block.createcraftsandcalls.station": "Telephone Switchboard",
+  "createcraftsandcalls.station.active_connections": "Telephone station — active connections: %s",
+  "createcraftsandcalls.route.pending": "Input selected. Click a socket to connect.",
+  "createcraftsandcalls.route.cancelled": "Selection cancelled.",
+  "createcraftsandcalls.route.connected": "Connection established!",
+  "createcraftsandcalls.route.disconnected": "Connection dropped.",
+  "createcraftsandcalls.phone.handset_down": "Handset put down.",
+  "createcraftsandcalls.phone.handset_up.linked": "Handset lifted. Waiting for the operator to connect you.",
+  "createcraftsandcalls.phone.handset_up.unlinked": "This phone is not wired to a station — contact an admin.",
+  "createcraftsandcalls.phone.bound_to_other": "This phone is already bound to another player."
+}
